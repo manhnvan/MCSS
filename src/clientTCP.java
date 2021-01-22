@@ -3,34 +3,26 @@ import java.io.*;
 import java.net.Socket;
 public class clientTCP {
     public static void main(String argv[]) throws Exception {
-        String sentence_from_server;
+        while (true) {
+            String sentence_from_server;
+            Socket clientSocket = new Socket("localhost", 8081);
+            System.out.println("connected");
 
-        //Tạo socket cho client kết nối đến server qua ID address và port number
-        Socket clientSocket = new Socket("localhost", 8080);
+            // get the output stream from the socket.
+            OutputStream outputStream = clientSocket.getOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
 
-        System.out.println("connected");
+            int[] array = {1, 2, 3, 4, 5, 6};
 
-        // get the output stream from the socket.
-        OutputStream outputStream = clientSocket.getOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+            objectOutputStream.writeObject(array);
 
-        int[] array = {1, 2, 3, 4, 5, 6};
+            // get the input stream from the connected socket
+            InputStream inputStream = clientSocket.getInputStream();
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
-        objectOutputStream.writeObject(array);
-
-        //Đọc tin từ Server thông qua InputSteam đã nối với socket
-        System.out.println("okie");
-
-        // get the input stream from the connected socket
-        InputStream inputStream = clientSocket.getInputStream();
-        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-
-        sentence_from_server = (String) objectInputStream.readObject();
-
-        //print kết qua ra màn hình
-        System.out.println("FROM SERVER: " + sentence_from_server);
-
-        //Đóng liên kết socket
-        clientSocket.close();
+            sentence_from_server = (String) objectInputStream.readObject();
+            System.out.println("FROM SERVER: " + sentence_from_server);
+            clientSocket.close();
+        }
     }
 }
